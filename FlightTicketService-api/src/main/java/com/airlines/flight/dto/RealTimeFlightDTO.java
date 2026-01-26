@@ -1,19 +1,15 @@
-package com.airlines.flight.entity;
+package com.airlines.flight.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("flight")
-public class Flight {
-    @Id
+public class RealTimeFlightDTO {
     private String id;
     private String flightNumber;
     private String departureCity;
@@ -24,7 +20,7 @@ public class Flight {
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private String airline;
-    private String status; // ON_TIME, DELAYED, CANCELLED, BOARDING, IN_FLIGHT
+    private String status;
     private Integer availableSeats;
     private Integer totalSeats;
     private String aircraft;

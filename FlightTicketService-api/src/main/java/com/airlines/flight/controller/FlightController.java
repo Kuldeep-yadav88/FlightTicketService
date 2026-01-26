@@ -18,6 +18,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/flights")
 @Tag(name = "flight", description = "flight controller APIs. it handles it upcoming request")
+@CrossOrigin(origins = "*")
 @Slf4j
 public class FlightController {
 
@@ -47,6 +48,33 @@ public class FlightController {
     @GetMapping("/get/flights/details")
     public APIResponseDTO getFlightInfo(@RequestBody SearchFlightDTO searchFlightDTO) {
         return null;
+    }
+
+    /**
+     * Search real-time flights from cloud data sources
+     *
+     * @param searchFlightDTO search criteria
+     * @return real-time flight data
+     */
+    @PostMapping("/search/realtime")
+    @Operation(summary = "Search real-time flights", description = "Fetches real-time flight data from cloud sources")
+    public APIResponseDTO searchRealTimeFlights(@Valid @RequestBody SearchFlightDTO searchFlightDTO) {
+        log.info("Received real-time flight search request: {} to {}", 
+            searchFlightDTO.getFrom(), searchFlightDTO.getTo());
+        return flightService.searchRealTimeFlights(searchFlightDTO);
+    }
+
+    /**
+     * Get live status for a specific flight
+     *
+     * @param flightNumber flight number
+     * @return live flight status
+     */
+    @GetMapping("/status/{flightNumber}")
+    @Operation(summary = "Get live flight status", description = "Fetches live status for a specific flight")
+    public APIResponseDTO getLiveFlightStatus(@PathVariable String flightNumber) {
+        log.info("Received live status request for flight: {}", flightNumber);
+        return flightService.getLiveFlightStatus(flightNumber);
     }
 
     /**

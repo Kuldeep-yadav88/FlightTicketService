@@ -7,11 +7,13 @@ import { AboutComponent } from './component/about/about.component';
 import { CustomerLoginComponent } from './component/customer-login/customer-login.component'
 import { FeedbackComponent } from './component/feedback/feedback.component';
 import { ContactUsPageComponent } from './component/contact-us-page/contact-us-page.component';
+import { FlightResultsComponent } from './component/flight-results/flight-results.component';
 
 
 const routes: Routes = [
   {path:'',component:HomeComponent},
   {path:'search-flight',component:SearchFlightComponent},
+  {path:'flight-results',component:FlightResultsComponent},
   {path:'Registration',component:RegistrationComponent},
   {path:'about',component:AboutComponent},
   {path:'cutomer-login',component:CustomerLoginComponent},

@@ -1,0 +1,131 @@
+<div class="flight-results-container">
+  <div class="header">
+    <div class="search-info">
+      <h1>Real-Time Flight Results</h1>
+      <p class="route">{{ searchParams.from }} → {{ searchParams.to }}</p>
+      <p class="date">{{ searchParams.departOn | date: 'fullDate' }}</p>
+    </div>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="refreshFlights()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+      <button mat-raised-button (click)="toggleAutoRefresh()" [color]="autoRefresh ? 'accent' : ''">
+        <mat-icon>{{ autoRefresh ? 'sync' : 'sync_disabled' }}</mat-icon>
+        Auto-Refresh {{ autoRefresh ? 'ON' : 'OFF' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <mat-icon class="info-icon">info</mat-icon>
+    <span>Showing {{ flights.length }} real-time flights from cloud sources</span>
+    <mat-icon class="live-icon" *ngIf="autoRefresh">fiber_manual_record</mat-icon>
+    <span *ngIf="autoRefresh" class="live-text">LIVE</span>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+    <p>Fetching real-time flight data from cloud...</p>
+  </div>
+
+  <div class="error" *ngIf="error && !loading">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="flights-list" *ngIf="!loading && !error">
+    <mat-card class="flight-card" *ngFor="let flight of flights">
+      <div class="flight-header">
+        <div class="airline-info">
+          <mat-icon class="airline-icon">flight</mat-icon>
+          <div>
+            <h3>{{ flight.airline }}</h3>
+            <p class="flight-number">{{ flight.flightNumber }}</p>
+          </div>
+        </div>
+        <div class="status-badge" [style.background-color]="getStatusColor(flight.status)">
+          <mat-icon>{{ getStatusIcon(flight.status) }}</mat-icon>
+          <span>{{ flight.status.replace('_', ' ') }}</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="flight-details">
+        <div class="time-section">
+          <div class="departure">
+            <h2>{{ formatTime(flight.departureTime) }}</h2>
+            <p class="city">{{ flight.departureCity }}</p>
+            <p class="airport">{{ flight.departureAirport }}</p>
+            <p class="date">{{ formatDate(flight.departureTime) }}</p>
+          </div>
+
+          <div class="flight-path">
+            <div class="duration">{{ calculateDuration(flight.departureTime, flight.arrivalTime) }}</div>
+            <div class="path-line">
+              <mat-icon class="flight-icon">flight</mat-icon>
+              <div class="line"></div>
+            </div>
+            <div class="aircraft">{{ flight.aircraft }}</div>
+          </div>
+
+          <div class="arrival">
+            <h2>{{ formatTime(flight.arrivalTime) }}</h2>
+            <p class="city">{{ flight.arrivalCity }}</p>
+            <p class="airport">{{ flight.arrivalAirport }}</p>
+            <p class="date">{{ formatDate(flight.arrivalTime) }}</p>
+          </div>
+        </div>
+
+        <div class="additional-info">
+          <div class="info-item">
+            <mat-icon>event_seat</mat-icon>
+            <div>
+              <strong>{{ flight.availableSeats }}</strong> seats available
+              <span class="seats-total">of {{ flight.totalSeats }}</span>
+            </div>
+          </div>
+          <div class="info-item" *ngIf="flight.gate">
+            <mat-icon>location_on</mat-icon>
+            <div>
+              <strong>Gate {{ flight.gate }}</strong>
+            </div>
+          </div>
+          <div class="info-item delay-info" *ngIf="flight.delayMinutes && flight.delayMinutes > 0">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <strong>Delayed by {{ flight.delayMinutes }} min</strong>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>update</mat-icon>
+            <div>
+              Updated: {{ flight.updatedAt | date: 'short' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="flight-footer">
+        <div class="price">
+          <span class="price-label">Price</span>
+          <h2>₹{{ flight.price }}</h2>
+          <span class="price-per">per person</span>
+        </div>
+        <button mat-raised-button color="primary" class="book-button">
+          <mat-icon>shopping_cart</mat-icon>
+          Book Now
+        </button>
+      </div>
+    </mat-card>
+
+    <div class="no-results" *ngIf="flights.length === 0">
+      <mat-icon>flight_takeoff</mat-icon>
+      <h3>No flights found</h3>
+      <p>Try adjusting your search criteria</p>
+    </div>
+  </div>
+</div>

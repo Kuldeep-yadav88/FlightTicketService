@@ -1,8 +1,15 @@
 package com.airlines.flight.service;
 
 import com.airlines.common.dto.APIResponseDTO;
+import com.airlines.flight.dto.RealTimeFlightDTO;
+import com.airlines.flight.dto.SearchFlightDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 /**
  * This is service class for flight management
  * it returns response to the controller.
@@ -10,6 +17,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FlightService {
+
+    @Autowired
+    private RealTimeFlightDataService realTimeFlightDataService;
 
     /**
      * Add latest flight in db.
@@ -46,4 +56,61 @@ public class FlightService {
         return null;
     }
 
+    /**
+     * Search real-time flights from cloud data
+     * @param searchFlightDTO search criteria
+     * @return API response with real-time flight data
+     */
+    public APIResponseDTO searchRealTimeFlights(SearchFlightDTO searchFlightDTO) {
+        log.info("Searching real-time flights from {} to {}", searchFlightDTO.getFrom(), searchFlightDTO.getTo());
+        
+        try {
+            List<RealTimeFlightDTO> flights = realTimeFlightDataService.fetchRealTimeFlights(
+                searchFlightDTO.getFrom(),
+                searchFlightDTO.getTo(),
+                searchFlightDTO.getDepartOn()
+            );
+            
+            APIResponseDTO response = new APIResponseDTO();
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Real-time flights fetched successfully");
+            response.setData(flights);
+            
+            return response;
+        } catch (Exception e) {
+            log.error("Error fetching real-time flights", e);
+            APIResponseDTO response = new APIResponseDTO();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage("Error fetching real-time flight data");
+            return response;
+        }
+    }
+
+    /**
+     * Get live status for a specific flight
+     * @param flightNumber flight number
+     * @return API response with live flight status
+     */
+    public APIResponseDTO getLiveFlightStatus(String flightNumber) {
+        log.info("Getting live status for flight: {}", flightNumber);
+        
+        try {
+            RealTimeFlightDTO flightStatus = realTimeFlightDataService.getLiveFlightStatus(flightNumber);
+            
+            APIResponseDTO response = new APIResponseDTO();
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Live flight status fetched successfully");
+            response.setData(flightStatus);
+            
+            return response;
+        } catch (Exception e) {
+            log.error("Error fetching live flight status", e);
+            APIResponseDTO response = new APIResponseDTO();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage("Error fetching live flight status");
+            return response;
+        }
+    }
+
 }
+
