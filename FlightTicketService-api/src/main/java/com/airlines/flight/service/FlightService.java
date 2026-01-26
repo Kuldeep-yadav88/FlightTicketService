@@ -4,7 +4,6 @@ import com.airlines.common.dto.APIResponseDTO;
 import com.airlines.flight.dto.RealTimeFlightDTO;
 import com.airlines.flight.dto.SearchFlightDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +16,11 @@ import java.util.List;
 @Service
 public class FlightService {
 
-    @Autowired
-    private RealTimeFlightDataService realTimeFlightDataService;
+    private final RealTimeFlightDataService realTimeFlightDataService;
+
+    public FlightService(RealTimeFlightDataService realTimeFlightDataService) {
+        this.realTimeFlightDataService = realTimeFlightDataService;
+    }
 
     /**
      * Add latest flight in db.

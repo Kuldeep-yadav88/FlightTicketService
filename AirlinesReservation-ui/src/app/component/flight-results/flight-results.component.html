@@ -3,7 +3,7 @@
     <div class="search-info">
       <h1>Real-Time Flight Results</h1>
       <p class="route">{{ searchParams.from }} → {{ searchParams.to }}</p>
-      <p class="date">{{ searchParams.departOn | date: 'fullDate' }}</p>
+      <p class="date">{{ searchParams?.departOn | date: 'fullDate' }}</p>
     </div>
     <div class="actions">
       <button mat-raised-button color="primary" (click)="refreshFlights()" [disabled]="loading">

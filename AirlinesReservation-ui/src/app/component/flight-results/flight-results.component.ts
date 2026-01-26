@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FlightService, RealTimeFlightData } from '../../services/flight.service';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -9,12 +9,14 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './flight-results.component.html',
   styleUrls: ['./flight-results.component.scss']
 })
-export class FlightResultsComponent implements OnInit {
+export class FlightResultsComponent implements OnInit, OnDestroy {
   flights: RealTimeFlightData[] = [];
   loading: boolean = false;
   error: string = '';
   searchParams: any = {};
   autoRefresh: boolean = true;
+  private refreshSubscription?: Subscription;
+  private paramsSubscription?: Subscription;
 
   constructor(
     private flightService: FlightService,
@@ -23,14 +25,14 @@ export class FlightResultsComponent implements OnInit {
 
   ngOnInit(): void {
     // Get search params from route
-    this.route.queryParams.subscribe(params => {
+    this.paramsSubscription = this.route.queryParams.subscribe(params => {
       this.searchParams = params;
       this.searchFlights();
     });
 
     // Auto-refresh every 30 seconds if enabled
     if (this.autoRefresh) {
-      interval(30000).pipe(
+      this.refreshSubscription = interval(30000).pipe(
         switchMap(() => this.flightService.searchRealTimeFlights({
           from: this.searchParams.from,
           to: this.searchParams.to,
@@ -48,6 +50,16 @@ export class FlightResultsComponent implements OnInit {
           console.error('Auto-refresh error:', err);
         }
       });
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscriptions to prevent memory leaks
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+    if (this.paramsSubscription) {
+      this.paramsSubscription.unsubscribe();
     }
   }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface RealTimeFlightData {
   id: string;
@@ -39,7 +40,7 @@ export interface APIResponse {
   providedIn: 'root'
 })
 export class FlightService {
-  private apiUrl = 'http://localhost:8081/flights';
+  private apiUrl = `${environment.apiUrl}/flights`;
 
   constructor(private http: HttpClient) { }
 
