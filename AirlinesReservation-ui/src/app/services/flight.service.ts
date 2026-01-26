@@ -31,9 +31,8 @@ export interface SearchFlightRequest {
 }
 
 export interface APIResponse {
-  status: number;
   message: string;
-  data: any;
+  objectDetails: any;
 }
 
 @Injectable({

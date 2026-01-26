@@ -5,7 +5,6 @@ import com.airlines.flight.dto.RealTimeFlightDTO;
 import com.airlines.flight.dto.SearchFlightDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -72,16 +71,14 @@ public class FlightService {
             );
             
             APIResponseDTO response = new APIResponseDTO();
-            response.setStatus(HttpStatus.OK.value());
             response.setMessage("Real-time flights fetched successfully");
-            response.setData(flights);
+            response.setObjectDetails(flights);
             
             return response;
         } catch (Exception e) {
             log.error("Error fetching real-time flights", e);
             APIResponseDTO response = new APIResponseDTO();
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMessage("Error fetching real-time flight data");
+            response.setMessage("Error fetching real-time flight data: " + e.getMessage());
             return response;
         }
     }
@@ -98,16 +95,14 @@ public class FlightService {
             RealTimeFlightDTO flightStatus = realTimeFlightDataService.getLiveFlightStatus(flightNumber);
             
             APIResponseDTO response = new APIResponseDTO();
-            response.setStatus(HttpStatus.OK.value());
             response.setMessage("Live flight status fetched successfully");
-            response.setData(flightStatus);
+            response.setObjectDetails(flightStatus);
             
             return response;
         } catch (Exception e) {
             log.error("Error fetching live flight status", e);
             APIResponseDTO response = new APIResponseDTO();
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setMessage("Error fetching live flight status");
+            response.setMessage("Error fetching live flight status: " + e.getMessage());
             return response;
         }
     }

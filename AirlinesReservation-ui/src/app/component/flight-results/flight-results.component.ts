@@ -40,8 +40,8 @@ export class FlightResultsComponent implements OnInit {
         }))
       ).subscribe({
         next: (response) => {
-          if (response.status === 200) {
-            this.flights = response.data;
+          if (response.objectDetails) {
+            this.flights = response.objectDetails;
           }
         },
         error: (err) => {
@@ -66,8 +66,8 @@ export class FlightResultsComponent implements OnInit {
     this.flightService.searchRealTimeFlights(searchRequest).subscribe({
       next: (response) => {
         this.loading = false;
-        if (response.status === 200) {
-          this.flights = response.data;
+        if (response.objectDetails) {
+          this.flights = response.objectDetails;
         } else {
           this.error = response.message || 'Failed to fetch flights';
         }
